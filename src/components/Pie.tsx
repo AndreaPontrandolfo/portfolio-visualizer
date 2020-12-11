@@ -1,5 +1,5 @@
 import { ResponsivePie } from "@nivo/pie";
-import { mock } from "../mock";
+import { mock } from "../pieMock";
 
 export const Pie = ({ data = mock }) => (
   <ResponsivePie

@@ -1,20 +1,26 @@
-import * as React from "react";
+import { useState } from "react";
 import { ChakraProvider, Box, Grid, theme } from "@chakra-ui/react";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
-import { Pie } from "./components/Pie";
+import { ChartsGroup, AssetClassSelector } from "./components";
+import { STOCKS } from "./constants";
 
-export const App = () => (
-  <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <div style={{ height: "100vh" }}>
-          <h2>Portfolio allocations</h2>
-          <Pie />
-          <h2>Stocks profitability</h2>
-          <Pie />
-        </div>
-      </Grid>
-    </Box>
-  </ChakraProvider>
-);
+export const App = () => {
+  const [selectedAssetClass, setSelectedAssetClass] = useState(STOCKS);
+  const handleAssetClassSelectionButton = (e: any) => {
+    return setSelectedAssetClass(e.target.innerText);
+  };
+
+  return (
+    <ChakraProvider theme={theme}>
+      <Box textAlign="center" fontSize="xl">
+        <Grid minH="100vh" p={3}>
+          <Box justifySelf="flex-end">
+            <AssetClassSelector event={handleAssetClassSelectionButton} />
+            <ColorModeSwitcher />
+          </Box>
+          <ChartsGroup label={selectedAssetClass} />
+        </Grid>
+      </Box>
+    </ChakraProvider>
+  );
+};
