@@ -22,6 +22,7 @@ export const ButtonGroupMember = ({
       onClick={event}
       borderRightRadius={right ? RADIUS_AMOUNT : 0}
       borderLeftRadius={left ? RADIUS_AMOUNT : 0}
+      lineHeight={0}
     >
       {label}
     </Button>

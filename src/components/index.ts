@@ -3,3 +3,7 @@ export { Pie } from "./Pie";
 export { ChartsGroup } from "./ChartsGroup";
 export { ButtonGroupMember } from "./ButtonGroupMember";
 export { AssetClassSelector } from "./AssetClassSelector";
+export { Dropzone } from "./Dropzone";
+export { AddButton } from "./AddButton";
+export { PortfolioForm } from "./PortfolioForm";
+export { Navbar } from "./Navbar";
