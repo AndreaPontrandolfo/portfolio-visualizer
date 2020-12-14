@@ -5,6 +5,5 @@ export const getUser = () => {
 
   return ref.on("value", (snapshot: any) => {
     const data = snapshot.val();
-    console.log("🚀 ~ file: getUser.ts ~ line 8 ~ returnref.on ~ data", data);
   });
 };
