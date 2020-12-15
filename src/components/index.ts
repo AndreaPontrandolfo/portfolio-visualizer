@@ -7,3 +7,4 @@ export { Dropzone } from "./Dropzone";
 export { AddButton } from "./AddButton";
 export { PortfolioForm } from "./PortfolioForm";
 export { Navbar } from "./Navbar";
+export { WarningSign } from "./WarningSign";

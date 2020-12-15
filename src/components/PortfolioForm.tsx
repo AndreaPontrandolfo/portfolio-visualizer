@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { drop, map, omit } from "ramda";
 import { hasData } from "ramda-addons";
+import { renameKeys, trimCharsEnd } from "ramda-adjunct";
 import xlsxParser from "xlsx-parse-json";
 import {
   Container,
@@ -16,9 +17,11 @@ import {
   Editable,
   EditablePreview,
   EditableInput,
+  Select,
+  HStack,
 } from "@chakra-ui/react";
 import { database } from "../services/database";
-import { Dropzone } from "../components";
+import { Dropzone, WarningSign } from "../components";
 import { getSuccessToastOptions, getFailureToastOptions } from "../utils";
 
 export const PortfolioForm = () => {
@@ -45,7 +48,16 @@ export const PortfolioForm = () => {
   const handleDropzone = async (files: any) => {
     const parsedFile = await xlsxParser.onFileSelection(files[0]);
     const reducedList = drop(2, parsedFile["Panoramica Portafoglio"]);
-    const cleanProduct = (list) => omit(["Ultimo ", "Valore in EUR"], list);
+    const cleanProduct = (product) => {
+      let cleanedProduct = product;
+      cleanedProduct.Quantità = trimCharsEnd(".", cleanedProduct.Quantità);
+      cleanedProduct = renameKeys(
+        { "Ultimo ": "Quote", "Valore in EUR": "Position" },
+        cleanedProduct
+      );
+      cleanedProduct = omit(["Valore"], cleanedProduct);
+      return cleanedProduct;
+    };
     const cleanedData = map(cleanProduct, reducedList);
 
     // firebase stuff. Move later.
@@ -105,33 +117,60 @@ export const PortfolioForm = () => {
               <Th>Product</Th>
               <Th>ISIN</Th>
               <Th>Quantity</Th>
-              <Th>Value ($)</Th>
+              <Th>Position (€)</Th>
+              <Th>Quote (€/$)</Th>
               <Th>PMC</Th>
+              <Th>Type</Th>
             </Tr>
           </Thead>
           <Tbody>
             {currentPortfolio?.map((product, index) => {
-              const { Prodotto, Codice, Quantità, Valore, PMC } = product;
+              const {
+                Prodotto,
+                Codice,
+                Quantità,
+                Position,
+                Quote,
+                PMC,
+                type,
+              } = product;
 
               return (
                 <Tr key={`prodotto-${index}`}>
                   <Td>{Prodotto}</Td>
                   <Td>{Codice}</Td>
                   <Td>{Quantità}</Td>
-                  <Td>{Valore}</Td>
-                  <Td maxW="88px">
-                    <Editable
-                      selectAllOnFocus={false}
-                      onSubmit={handleChangePMC}
-                      onEdit={() => handleEditableOnChange(index, product)}
-                      defaultValue={PMC ? PMC : "N/D"}
-                      border="1px #E2E8F0 solid"
-                      borderRadius="0.5rem;"
-                      maxW="88px"
-                    >
-                      <EditablePreview w="100%" fontSize="18px" p="8px 10px" />
-                      <EditableInput w="100%" fontSize="18px" p="8px 10px" />
-                    </Editable>
+                  <Td>{Position}</Td>
+                  <Td>{Quote}</Td>
+                  <Td w="88px">
+                    <HStack>
+                      <Editable
+                        selectAllOnFocus={false}
+                        onSubmit={handleChangePMC}
+                        onEdit={() => handleEditableOnChange(index, product)}
+                        defaultValue={PMC ? PMC : "N/D"}
+                        border="1px #E2E8F0 solid"
+                        borderRadius="0.5rem;"
+                        w="88px"
+                      >
+                        <EditablePreview
+                          w="100%"
+                          fontSize="18px"
+                          p="8px 10px"
+                        />
+                        <EditableInput w="100%" fontSize="18px" p="8px 10px" />
+                      </Editable>
+                      <WarningSign requirement={PMC} />
+                    </HStack>
+                  </Td>
+                  <Td>
+                    <HStack>
+                      <Select placeholder={type ? type : "Select type"}>
+                        <option value="stock">Stock</option>
+                        <option value="ETF">ETF</option>
+                      </Select>
+                      <WarningSign requirement={type} />
+                    </HStack>
                   </Td>
                 </Tr>
               );
