@@ -1,9 +1,10 @@
 // @ts-nocheck
 
 import { useState, useEffect, useCallback } from "react";
-import { drop, map, omit } from "ramda";
-import { hasData } from "ramda-addons";
+import { useStoreState, useStoreActions } from "easy-peasy";
+import { drop, map, omit, isNil, includes } from "ramda";
 import { renameKeys, trimCharsEnd } from "ramda-adjunct";
+import { hasData } from "ramda-addons";
 import xlsxParser from "xlsx-parse-json";
 import {
   Container,
@@ -22,13 +23,16 @@ import {
 } from "@chakra-ui/react";
 import { database } from "../services/database";
 import { Dropzone, WarningSign } from "../components";
+import { STOCK, ETF } from "../constants";
 import { getSuccessToastOptions, getFailureToastOptions } from "../utils";
 
 export const PortfolioForm = () => {
   const toast = useToast();
+  const products = useStoreState((state) => state.products);
+  const fetchProducts = useStoreActions((actions) => actions.fetchProducts);
   const [currentPMC, setCurrentPMC] = useState(null);
   const [currentPortfolio, setCurrentPortfolio] = useState([]);
-  const [touchedProductId, setTouchedProductId] = useState({});
+  const [touchedProductId, setTouchedProductId] = useState(0);
 
   const fireCompletionCallback = ({ successMessage, failureMessage }) => {
     return (error) => {
@@ -45,11 +49,25 @@ export const PortfolioForm = () => {
     };
   };
 
+  const determineProductType = (productName) => {
+    if (
+      includes("XTRACKERS", productName) ||
+      includes("WISDOMTREE", productName) ||
+      includes("ISHARES", productName) ||
+      includes("QQQ", productName)
+    ) {
+      return ETF;
+    } else return STOCK;
+  };
+
   const handleDropzone = async (files: any) => {
     const parsedFile = await xlsxParser.onFileSelection(files[0]);
     const reducedList = drop(2, parsedFile["Panoramica Portafoglio"]);
     const cleanProduct = (product) => {
       let cleanedProduct = product;
+      if (isNil(cleanedProduct.type)) {
+        cleanedProduct.type = determineProductType(cleanedProduct.Prodotto);
+      }
       cleanedProduct.Quantità = trimCharsEnd(".", cleanedProduct.Quantità);
       cleanedProduct = renameKeys(
         { "Ultimo ": "Quote", "Valore in EUR": "Position" },
@@ -88,29 +106,50 @@ export const PortfolioForm = () => {
     }
   };
 
-  const fetchPortfolio = useCallback(() => {
-    const ref = database.ref("users/utente1/products");
-    ref.on("value", (snapshot) => {
-      const data = snapshot.val();
-      setCurrentPortfolio(data);
-    });
-  }, []);
+  // const fetchPortfolio = useCallback(() => {
+  //   const ref = database.ref("users/utente1/products");
+  //   ref.on("value", (snapshot) => {
+  //     const data = snapshot.val();
+  //     setCurrentPortfolio(data);
+  //   });
+  // }, []);
 
   const handleEditableOnChange = (productIndex, product) => {
     setCurrentPMC(product.PMC);
     setTouchedProductId(productIndex);
   };
 
+  const handleTypeSelect = (e, productIndex) => {
+    const newType = e.target.value;
+    const productsRef = database
+      .ref("users/utente1/products")
+      .child(productIndex);
+
+    productsRef.update(
+      { type: newType },
+      fireCompletionCallback({
+        successMessage: "Product type updated successfully.",
+        failureMessage: "An error occurred. Product type could not be updated.",
+      })
+    );
+  };
+
   useEffect(() => {
-    fetchPortfolio();
-  }, [fetchPortfolio]);
+    console.log("RE-RENDERING!!");
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // useEffect(() => {
+  //   console.log("RE-RENDERING!!");
+  //   fetchPortfolio();
+  // }, [fetchPortfolio]);
 
   return (
     <Container maxW="80%">
       <Container borderWidth="1px" borderRadius="lg" m="2% auto">
         <Dropzone onChange={handleDropzone} />
       </Container>
-      {hasData(currentPortfolio) ? (
+      {hasData(products) ? (
         <Table variant="simple">
           <Thead>
             <Tr>
@@ -124,7 +163,7 @@ export const PortfolioForm = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {currentPortfolio?.map((product, index) => {
+            {products?.map((product, index) => {
               const {
                 Prodotto,
                 Codice,
@@ -164,13 +203,13 @@ export const PortfolioForm = () => {
                     </HStack>
                   </Td>
                   <Td>
-                    <HStack>
-                      <Select placeholder={type ? type : "Select type"}>
-                        <option value="stock">Stock</option>
-                        <option value="ETF">ETF</option>
-                      </Select>
-                      <WarningSign requirement={type} />
-                    </HStack>
+                    <Select
+                      onChange={(e) => handleTypeSelect(e, index)}
+                      defaultValue={type}
+                    >
+                      <option value={STOCK}>{STOCK}</option>
+                      <option value={ETF}>{ETF}</option>
+                    </Select>
                   </Td>
                 </Tr>
               );

@@ -1,13 +1,17 @@
 import * as React from "react";
 import ReactDOM from "react-dom";
+import { StoreProvider } from "easy-peasy";
 import { ColorModeScript } from "@chakra-ui/react";
 import { App } from "./App";
+import { store } from "./store";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ColorModeScript />
-    <App />
+    <StoreProvider store={store}>
+      <ColorModeScript />
+      <App />
+    </StoreProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
