@@ -5,9 +5,10 @@ import { database } from "../services/database";
 
 export const productsModel = {
   products: [],
-  fetchProducts: thunk(async (actions, payload = "utente1") => {
+  fetchProducts: thunk(async (actions, payload, helpers) => {
     try {
-      const ref = database.ref(`users/${payload}/products`);
+      const { user } = helpers.getState();
+      const ref = database.ref(`users/${user}/products`);
       ref.on("value", (snapshot) => {
         const data = snapshot.val();
         actions.setProducts(data);

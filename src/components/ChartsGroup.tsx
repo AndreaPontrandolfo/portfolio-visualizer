@@ -3,6 +3,7 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { useStoreState } from "easy-peasy";
 import { filter } from "ramda";
+import { hasData } from "ramda-addons";
 import { getSingularLabel } from "../utils";
 import { Pie, Bar } from "../components";
 
@@ -12,7 +13,9 @@ export const ChartsGroup = () => {
   const matchProductsBySelectedAssetClass = (product) => {
     return product.type === getSingularLabel(selectedAssetClass) && product.PMC;
   };
-  const productsToShow = filter(matchProductsBySelectedAssetClass, products);
+  const productsToShow = hasData(products)
+    ? filter(matchProductsBySelectedAssetClass, products)
+    : [];
 
   return (
     <Flex>

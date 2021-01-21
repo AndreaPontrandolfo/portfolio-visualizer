@@ -29,6 +29,7 @@ import { getSuccessToastOptions, getFailureToastOptions } from "../utils";
 export const PortfolioForm = () => {
   const toast = useToast();
   const products = useStoreState((state) => state.products);
+  const user = useStoreState((state) => state.user);
   const [currentPMC, setCurrentPMC] = useState(null);
   const [currentPortfolio, setCurrentPortfolio] = useState([]);
   const [touchedProductId, setTouchedProductId] = useState(0);
@@ -78,7 +79,7 @@ export const PortfolioForm = () => {
     const cleanedData = map(cleanProduct, reducedList);
 
     // firebase stuff. Move later.
-    const productsRef = database.ref("users/utente1").child("products");
+    const productsRef = database.ref(`users/${user}`).child("products");
     // .push()
     productsRef.set(
       cleanedData,
@@ -92,7 +93,7 @@ export const PortfolioForm = () => {
   const handleChangePMC = (newPMC) => {
     if (isFinite(newPMC) && currentPMC !== newPMC) {
       const productsRef = database
-        .ref("users/utente1/products")
+        .ref(`users/${user}/products`)
         .child(touchedProductId);
 
       productsRef.update(
@@ -121,7 +122,7 @@ export const PortfolioForm = () => {
   const handleTypeSelect = (e, productIndex) => {
     const newType = e.target.value;
     const productsRef = database
-      .ref("users/utente1/products")
+      .ref(`users/${user}/products`)
       .child(productIndex);
 
     productsRef.update(

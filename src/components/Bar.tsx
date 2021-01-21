@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { sort } from "ramda";
+import { isNegative } from "ramda-adjunct";
 import { ResponsiveBar } from "@nivo/bar";
 import { normalizeNumber } from "../utils";
 
@@ -20,7 +21,9 @@ export const Bar = ({ productsToShow }: { productsToShow: [] }) => {
       valore: normalizeNumber(product.Position) - profitto,
       valoreColor: "hsl(205, 77%, 75%)",
       profitto,
-      profittoColor: "hsl(106, 82%, 57%)",
+      profittoColor: isNegative(profitto)
+        ? "hsl(0, 80%, 63%)"
+        : "hsl(106, 82%, 57%)",
     };
   };
   const getProductWithHigherProfitto = (prevProduct, nextProduct) => {
