@@ -1,20 +1,16 @@
-import { ChakraProvider, Box, Grid, theme } from "@chakra-ui/react";
-import { ColorModeSwitcher } from "./ColorModeSwitcher";
-import { Navbar } from "./components";
-import { getUser } from "./utils";
+// @ts-nocheck
+
+import { ChakraProvider, Box, theme } from "@chakra-ui/react";
+import { useStoreState } from "easy-peasy";
+import { AuthenticatedApp } from "./AuthenticatedApp";
+import { UnauthenticatedApp } from "./UnauthenticatedApp";
 
 export const App = () => {
-  // getUser();
-  const childs = {
-    ColorModeSwitcher,
-  };
-
+  const user = useStoreState((state) => state.user);
   return (
     <ChakraProvider theme={theme}>
       <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <Navbar {...childs} />
-        </Grid>
+        {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
       </Box>
     </ChakraProvider>
   );

@@ -1,12 +1,39 @@
-import { ResponsiveBar } from "@nivo/bar";
-import { barMock } from "../barMock";
+// @ts-nocheck
 
-export const Bar = ({ data = barMock }) => {
+import { sort } from "ramda";
+import { ResponsiveBar } from "@nivo/bar";
+import { normalizeNumber } from "../utils";
+
+type BarUnit = {
+  name: string;
+  Position: string;
+};
+
+export const Bar = ({ productsToShow }: { productsToShow: [] }) => {
+  const remodelProduct = (product: BarUnit) => {
+    const profitto = normalizeNumber(
+      `${(product.Quote - product.PMC) * product.Quantità}`
+    );
+
+    return {
+      ticker: product.name,
+      valore: normalizeNumber(product.Position) - profitto,
+      valoreColor: "hsl(205, 77%, 75%)",
+      profitto,
+      profittoColor: "hsl(106, 82%, 57%)",
+    };
+  };
+  const getProductWithHigherProfitto = (prevProduct, nextProduct) => {
+    return nextProduct.profitto - prevProduct.profitto;
+  };
+  const products = productsToShow.map(remodelProduct);
+  const sortedProductsByProfitto = sort(getProductWithHigherProfitto, products);
+
   return (
     <ResponsiveBar
-      data={data}
+      data={sortedProductsByProfitto}
       keys={["valore", "profitto"]}
-      indexBy="profitto"
+      indexBy="ticker"
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       padding={0.3}
       valueScale={{ type: "linear" }}

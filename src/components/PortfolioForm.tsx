@@ -29,7 +29,6 @@ import { getSuccessToastOptions, getFailureToastOptions } from "../utils";
 export const PortfolioForm = () => {
   const toast = useToast();
   const products = useStoreState((state) => state.products);
-  const fetchProducts = useStoreActions((actions) => actions.fetchProducts);
   const [currentPMC, setCurrentPMC] = useState(null);
   const [currentPortfolio, setCurrentPortfolio] = useState([]);
   const [touchedProductId, setTouchedProductId] = useState(0);
@@ -70,7 +69,7 @@ export const PortfolioForm = () => {
       }
       cleanedProduct.Quantità = trimCharsEnd(".", cleanedProduct.Quantità);
       cleanedProduct = renameKeys(
-        { "Ultimo ": "Quote", "Valore in EUR": "Position" },
+        { "Ultimo ": "Quote", "Valore in EUR": "Position", Prodotto: "name" },
         cleanedProduct
       );
       cleanedProduct = omit(["Valore"], cleanedProduct);
@@ -134,11 +133,6 @@ export const PortfolioForm = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("RE-RENDERING!!");
-    fetchProducts();
-  }, [fetchProducts]);
-
   // useEffect(() => {
   //   console.log("RE-RENDERING!!");
   //   fetchPortfolio();
@@ -153,7 +147,7 @@ export const PortfolioForm = () => {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>Product</Th>
+              <Th>Name</Th>
               <Th>ISIN</Th>
               <Th>Quantity</Th>
               <Th>Position (€)</Th>
@@ -165,7 +159,7 @@ export const PortfolioForm = () => {
           <Tbody>
             {products?.map((product, index) => {
               const {
-                Prodotto,
+                name,
                 Codice,
                 Quantità,
                 Position,
@@ -176,7 +170,7 @@ export const PortfolioForm = () => {
 
               return (
                 <Tr key={`prodotto-${index}`}>
-                  <Td>{Prodotto}</Td>
+                  <Td>{name}</Td>
                   <Td>{Codice}</Td>
                   <Td>{Quantità}</Td>
                   <Td>{Position}</Td>

@@ -1,17 +1,19 @@
-import { useState } from "react";
-import { STOCKS } from "../constants";
+// @ts-nocheck
+
+import { useStoreActions } from "easy-peasy";
 import { ChartsGroup, AssetClassSelector } from "../components";
 
 export const Charts = () => {
-  const [selectedAssetClass, setSelectedAssetClass] = useState(STOCKS);
-  const handleAssetClassSelectionButton = (e: any) => {
-    return setSelectedAssetClass(e.target.innerText);
-  };
+  const selectAssetClass = useStoreActions(
+    (actions) => actions.selectAssetClass
+  );
+  const handleAssetClassSelectionButton = (e: any) =>
+    selectAssetClass(e.target.innerText);
 
   return (
     <section>
       <AssetClassSelector event={handleAssetClassSelectionButton} />
-      <ChartsGroup label={selectedAssetClass} />
+      <ChartsGroup />
     </section>
   );
 };
