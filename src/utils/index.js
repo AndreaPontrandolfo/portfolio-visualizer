@@ -1,4 +1,3 @@
-export { getUser } from "./getUser";
 export { getSuccessToastOptions } from "./getSuccessToastOptions";
 export { getFailureToastOptions } from "./getFailureToastOptions";
 export { getSingularLabel } from "./getSingularLabel";

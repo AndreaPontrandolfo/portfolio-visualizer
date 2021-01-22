@@ -13,4 +13,8 @@ export const userModel = {
       state.user = payload;
     }
   }),
+  selectedProfile: "",
+  setSelectedProfile: action((state, payload) => {
+    state.selectedProfile = payload;
+  }),
 };

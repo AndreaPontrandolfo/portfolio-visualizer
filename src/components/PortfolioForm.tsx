@@ -54,6 +54,7 @@ export const PortfolioForm = () => {
       includes("XTRACKERS", productName) ||
       includes("WISDOMTREE", productName) ||
       includes("ISHARES", productName) ||
+      includes("VANECK", productName) ||
       includes("QQQ", productName)
     ) {
       return ETF;

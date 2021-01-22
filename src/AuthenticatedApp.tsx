@@ -8,13 +8,17 @@ import { Navbar } from "./components";
 
 export const AuthenticatedApp = () => {
   const fetchProducts = useStoreActions((actions) => actions.fetchProducts);
+  const fetchSelectedProfileProducts = useStoreActions(
+    (actions) => actions.fetchSelectedProfileProducts
+  );
   const childs = {
     ColorModeSwitcher,
   };
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+    fetchSelectedProfileProducts();
+  }, [fetchProducts, fetchSelectedProfileProducts]);
 
   return (
     <Grid minH="100vh" p={3}>

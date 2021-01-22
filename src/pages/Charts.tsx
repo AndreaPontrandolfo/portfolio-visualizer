@@ -1,7 +1,12 @@
 // @ts-nocheck
 
+import { HStack } from "@chakra-ui/react";
 import { useStoreActions } from "easy-peasy";
-import { ChartsGroup, AssetClassSelector } from "../components";
+import {
+  ChartsGroup,
+  AssetClassSelector,
+  ProfileSelectionSelect,
+} from "../components";
 
 export const Charts = () => {
   const selectAssetClass = useStoreActions(
@@ -12,7 +17,10 @@ export const Charts = () => {
 
   return (
     <section>
-      <AssetClassSelector event={handleAssetClassSelectionButton} />
+      <HStack justifyContent="center">
+        <ProfileSelectionSelect />
+        <AssetClassSelector event={handleAssetClassSelectionButton} />
+      </HStack>
       <ChartsGroup />
     </section>
   );

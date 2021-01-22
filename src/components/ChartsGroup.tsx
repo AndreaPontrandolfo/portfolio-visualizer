@@ -10,11 +10,17 @@ import { Pie, Bar } from "../components";
 export const ChartsGroup = () => {
   const selectedAssetClass = useStoreState((state) => state.selectedAssetClass);
   const products = useStoreState((state) => state.products);
+  const selectedProfileProducts = useStoreState(
+    (state) => state.selectedProfileProducts
+  );
+  const currentProfileProducts = hasData(selectedProfileProducts)
+    ? selectedProfileProducts
+    : products;
   const matchProductsBySelectedAssetClass = (product) => {
     return product.type === getSingularLabel(selectedAssetClass) && product.PMC;
   };
-  const productsToShow = hasData(products)
-    ? filter(matchProductsBySelectedAssetClass, products)
+  const productsToShow = hasData(currentProfileProducts)
+    ? filter(matchProductsBySelectedAssetClass, currentProfileProducts)
     : [];
 
   return (

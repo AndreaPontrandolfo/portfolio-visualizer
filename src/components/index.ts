@@ -8,3 +8,4 @@ export { AddButton } from "./AddButton";
 export { PortfolioForm } from "./PortfolioForm";
 export { Navbar } from "./Navbar";
 export { WarningSign } from "./WarningSign";
+export { ProfileSelectionSelect } from "./ProfileSelectionSelect";
