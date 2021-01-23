@@ -10,10 +10,11 @@ import { Pie, Bar } from "../components";
 export const ChartsGroup = () => {
   const selectedAssetClass = useStoreState((state) => state.selectedAssetClass);
   const products = useStoreState((state) => state.products);
+  const selectedProfile = useStoreState((state) => state.selectedProfile);
   const selectedProfileProducts = useStoreState(
     (state) => state.selectedProfileProducts
   );
-  const currentProfileProducts = hasData(selectedProfileProducts)
+  const currentProfileProducts = selectedProfile
     ? selectedProfileProducts
     : products;
   const matchProductsBySelectedAssetClass = (product) => {
