@@ -26,3 +26,4 @@ yarn-error.log*
 .eslintcache
 # firebaseConfig.js
 db.json
+todos.txt
